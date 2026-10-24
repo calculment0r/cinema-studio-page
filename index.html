@@ -1,0 +1,1004 @@
+<title>Atelier Cinema Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;500&family=Chakra+Petch:wght@400;500;600&family=Courier+Prime&family=Literata:ital,opsz,wght@1,7..72,300;1,7..72,400&display=swap">
+<style>
+/* Les deux fontes de la maison (Venus Rising, Norelli) se chargent depuis fonts/ quand elles y sont ;
+   sinon Chakra Petch prend le relais. Elles n'entrent pas dans le dépôt (licence). */
+@font-face{font-family:'Venus Rising';src:url(fonts/venus-rising.otf) format('opentype');font-display:swap}
+@font-face{font-family:'Norelli';src:url(fonts/norelli-black.otf) format('opentype');font-display:swap}
+
+/* Mise en page : une table lumineuse de régie. Filets fins, grille de points, pas de cartes arrondies ;
+   chaque section est une planche numérotée dans l'ordre où le travail avance. */
+:root{
+  color-scheme:dark;
+  --bg:#0a0d0b;--panel:#101413;--panel2:#151a18;
+  --ink:#e6eae7;--ink2:#a3aea9;--ink3:#7c8884;
+  --cy:#b9cfd8;--or:#e0674a;--amb:#d6a24a;--grn:#4f9a70;
+  --on-or:#170c08;
+  --line:rgba(198,213,220,.14);--line2:rgba(198,213,220,.28);--line-cy:rgba(185,207,216,.5);--line-or:rgba(224,103,74,.7);
+  --dot:rgba(198,213,220,.11);--or-bg:rgba(224,103,74,.13);--amb-bg:rgba(214,162,74,.12);--cy-bg:rgba(185,207,216,.08);--grn-bg:rgba(79,154,112,.18);
+  --ombre:rgba(0,0,0,.5);
+  --f-black:'Norelli','Venus Rising','Chakra Petch',sans-serif;
+  --f-disp:'Venus Rising','Chakra Petch',sans-serif;
+  --f-ui:'Chakra Petch',system-ui,sans-serif;
+  --f-mono:'Azeret Mono',ui-monospace,monospace;
+  --f-cit:'Literata',Georgia,serif;
+  --f-script:'Courier Prime','Courier New',monospace;
+  --max:1200px;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#e8ebe7;--panel:#f2f4f1;--panel2:#dde2dd;
+  --ink:#121614;--ink2:#3f4a45;--ink3:#5b6661;
+  --cy:#2f5866;--or:#b4432a;--amb:#8a5f12;--grn:#2c6b47;
+  --on-or:#fff6f2;
+  --line:rgba(20,30,26,.14);--line2:rgba(20,30,26,.3);--line-cy:rgba(47,88,102,.55);--line-or:rgba(180,67,42,.75);
+  --dot:rgba(20,30,26,.1);--or-bg:rgba(180,67,42,.1);--amb-bg:rgba(138,95,18,.1);--cy-bg:rgba(47,88,102,.08);--grn-bg:rgba(44,107,71,.12);
+  --ombre:rgba(0,0,0,.15);
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#e8ebe7;--panel:#f2f4f1;--panel2:#dde2dd;
+  --ink:#121614;--ink2:#3f4a45;--ink3:#5b6661;
+  --cy:#2f5866;--or:#b4432a;--amb:#8a5f12;--grn:#2c6b47;
+  --on-or:#fff6f2;
+  --line:rgba(20,30,26,.14);--line2:rgba(20,30,26,.3);--line-cy:rgba(47,88,102,.55);--line-or:rgba(180,67,42,.75);
+  --dot:rgba(20,30,26,.1);--or-bg:rgba(180,67,42,.1);--amb-bg:rgba(138,95,18,.1);--cy-bg:rgba(47,88,102,.08);--grn-bg:rgba(44,107,71,.12);
+  --ombre:rgba(0,0,0,.15);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:24px 24px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+main,header.barre,footer{position:relative;z-index:1}
+button,input,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:1.5px solid var(--cy);outline-offset:3px}
+a{color:var(--cy);text-underline-offset:3px;text-decoration-thickness:1px}
+::selection{background:var(--or);color:var(--on-or)}
+.wrap{max-width:var(--max);margin:0 auto}
+.lbl{font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
+.lbl.or{color:var(--or)}.lbl.amb{color:var(--amb)}.lbl.cy{color:var(--cy)}.lbl.grn{color:var(--grn)}
+.cit{font-family:var(--f-cit);font-style:italic}
+p{margin:0}
+
+/* barre de navigation */
+header.barre{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);box-shadow:inset 0 -1px 0 0 var(--line);margin:0 calc(-1 * max(16px,env(safe-area-inset-right,0px))) 0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.barre .wrap{display:flex;align-items:center;gap:20px;height:52px}
+.logo{font-family:var(--f-black);font-size:15px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+nav.som{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+nav.som::-webkit-scrollbar{display:none}
+nav.som a{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);text-decoration:none;padding:8px 10px;white-space:nowrap}
+nav.som a:hover,nav.som a.ici{color:var(--ink)}
+nav.som a.ici{box-shadow:inset 0 -1px 0 0 var(--or)}
+.theme{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);padding:8px 0;white-space:nowrap}
+.theme:hover{color:var(--ink)}
+
+/* planches */
+section.pl{padding:110px 0 40px;scroll-margin-top:40px}
+.num{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.num b{font-family:var(--f-mono);font-weight:400;font-size:10px;letter-spacing:.24em;color:var(--or)}
+.num i{flex:0 0 56px;height:1px;background:var(--line-or)}
+h2{margin:0 0 20px;font-family:var(--f-disp);font-weight:400;text-transform:uppercase;letter-spacing:.05em;line-height:1.04;font-size:clamp(23px,4.6vw,56px);text-wrap:balance;overflow-wrap:break-word}
+h2 em{font-style:normal;color:var(--cy)}
+h3{margin:0;font-family:var(--f-disp);font-weight:400;text-transform:uppercase;letter-spacing:.05em;font-size:17px;line-height:1.2}
+.chapo{max-width:62ch;font-size:clamp(16px,1.5vw,19px);line-height:1.6;color:var(--ink2)}
+.chapo b{color:var(--ink);font-weight:500}
+.note{font-size:13px;color:var(--ink3);max-width:70ch}
+.cadre{box-shadow:inset 0 0 0 1px var(--line)}
+.exemple{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--amb);padding:6px 10px;box-shadow:inset 0 0 0 1px var(--amb);background:var(--amb-bg)}
+
+/* 00 l'ouverture */
+.hero{padding:70px 0 0}
+.hero h1{margin:16px 0 22px;font-family:var(--f-black);font-weight:400;text-transform:uppercase;letter-spacing:.05em;line-height:.95;font-size:clamp(42px,8.4vw,118px)}
+.hero h1 span{display:block}
+.hero h1 span+span{color:var(--or);font-family:var(--f-disp)}
+.hero .chapo{max-width:56ch}
+.nuee{margin-top:44px}
+.nuee .tete{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 24px;flex-wrap:wrap;min-height:40px}
+.nuee .zone{position:relative;height:clamp(200px,28vw,330px);margin-top:10px}
+.nuee canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.nuee .leg{display:flex;gap:18px;flex-wrap:wrap}
+.nuee .info{text-align:right}
+.nuee .info b{display:block;font-family:var(--f-mono);font-weight:400;font-size:12px;letter-spacing:.1em;color:var(--ink)}
+.pastille{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2)}
+.pastille i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.etat{display:grid;grid-template-columns:repeat(5,1fr);margin-top:26px;box-shadow:inset 0 0 0 1px var(--line)}
+.etat>div{padding:20px 18px;box-shadow:inset -1px 0 0 0 var(--line)}
+.etat>div:last-child{box-shadow:none;background:var(--or-bg)}
+.etat b{display:block;font-family:var(--f-disp);font-weight:400;font-size:clamp(26px,3vw,40px);line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums}
+.etat>div:last-child b{color:var(--or)}
+.etat span{font-size:13px;color:var(--ink2);display:block}
+
+/* les machines */
+.machines{display:grid;grid-template-columns:repeat(3,1fr);margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.machines>div{padding:24px 24px 22px;box-shadow:inset -1px 0 0 0 var(--line);display:grid;gap:12px;align-content:start;min-width:0}
+.machines>div:last-child{box-shadow:none}
+.machines .mach{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.machines .mach b{font-family:var(--f-disp);font-weight:400;font-size:22px;letter-spacing:.06em}
+.machines p{font-size:14px;color:var(--ink2)}
+.machines dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:13px}
+.machines dt{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);padding-top:3px}
+.machines dd{margin:0;color:var(--ink);font-variant-numeric:tabular-nums}
+.machines .flux{height:46px}
+.machines .flux svg{width:100%;height:100%;display:block}
+.etat-m{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--amb);padding:4px 8px;box-shadow:inset 0 0 0 1px var(--amb)}
+
+/* 01 le principe */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);margin-top:44px;box-shadow:inset 0 0 0 1px var(--line)}
+.trio>div{padding:28px 26px;box-shadow:inset -1px 0 0 0 var(--line);display:grid;gap:12px;align-content:start}
+.trio>div:last-child{box-shadow:none}
+.trio p{color:var(--ink2);font-size:15px}
+.trio .fig{height:92px;margin-bottom:6px}
+.trio svg{width:100%;height:100%;overflow:visible}
+.trio svg text{font-family:var(--f-mono);font-size:8px;letter-spacing:.12em;fill:var(--ink3)}
+.regles{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:40px}
+.regles div{padding-top:14px;box-shadow:inset 0 1px 0 0 var(--line)}
+.regles b{display:block;font-weight:500;font-size:16px;margin:8px 0 6px}
+.regles p{font-size:14px;color:var(--ink2)}
+
+/* 02 la saison */
+.onglets{display:flex;flex-wrap:wrap;box-shadow:inset 0 0 0 1px var(--line);width:max-content;max-width:100%}
+.onglets button{padding:11px 15px;font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);box-shadow:inset -1px 0 0 0 var(--line)}
+.onglets button:last-child{box-shadow:none}
+.onglets button:hover{color:var(--ink)}
+.onglets button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.saison{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0;margin-top:22px;box-shadow:inset 0 0 0 1px var(--line)}
+.carte{padding:22px 20px 18px;min-width:0;box-shadow:inset -1px 0 0 0 var(--line)}
+.carte .defil{overflow-x:auto}
+.carte svg{display:block}
+.carte svg text{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;fill:var(--ink3)}
+.carte svg .nom{font-family:var(--f-ui);font-size:12px;letter-spacing:0;fill:var(--ink2)}
+.carte svg .cel{fill:var(--ink2)}
+.carte svg .cel.spec{fill:var(--cy)}
+.carte svg .col{fill:transparent;cursor:pointer}
+.carte svg .col:hover,.carte svg .col.on{fill:var(--cy-bg)}
+.carte svg .ligne{stroke:var(--line);stroke-width:1}
+.carte svg .barre{fill:var(--line2)}
+.carte svg .barre.on{fill:var(--or)}
+.config{padding:22px 22px;display:grid;gap:18px;align-content:start;background:var(--panel)}
+.config .gros{font-family:var(--f-disp);font-size:44px;line-height:1;font-variant-numeric:tabular-nums}
+.config .ligne2{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0;box-shadow:inset 0 1px 0 0 var(--line);font-size:14px;color:var(--ink2)}
+.config .ligne2 b{font-family:var(--f-mono);font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+.eps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.eps label{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 0;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;color:var(--ink2)}
+.eps input{position:absolute;opacity:0;pointer-events:none}
+.eps label:has(input:checked){background:var(--cy-bg);box-shadow:inset 0 0 0 1px var(--line-cy);color:var(--ink)}
+.eps label:has(input:focus-visible){outline:1.5px solid var(--cy);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--cy)}
+.scene-info{min-height:120px;padding-top:14px;box-shadow:inset 0 1px 0 0 var(--line);font-size:14px;color:var(--ink2)}
+.scene-info b{color:var(--ink);font-weight:500}
+.lecteurs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.lecteurs span{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;padding:5px 8px;box-shadow:inset 0 0 0 1px var(--line2);color:var(--ink)}
+.lecteurs span.spec{box-shadow:inset 0 0 0 1px var(--line-cy);color:var(--cy)}
+
+/* 03 les lectures */
+.lectures{display:grid;grid-template-columns:280px minmax(0,1fr);margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.lectures .liste{display:grid;align-content:start;box-shadow:inset -1px 0 0 0 var(--line)}
+.lectures .liste button{display:grid;grid-template-columns:28px 1fr;gap:10px;text-align:left;padding:18px 20px;box-shadow:inset 0 -1px 0 0 var(--line);color:var(--ink2)}
+.lectures .liste button b{font-family:var(--f-mono);font-weight:400;font-size:11px;color:var(--ink3);padding-top:2px}
+.lectures .liste button span{font-size:15px;line-height:1.35}
+.lectures .liste button:hover{color:var(--ink)}
+.lectures .liste button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:inset 0 -1px 0 0 var(--line),inset 2px 0 0 0 var(--cy)}
+.lectures .liste button small{grid-column:2;font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.lecture{padding:26px 28px;display:grid;gap:22px;min-width:0}
+.vue{position:relative}
+.vue svg{width:100%;height:auto;display:block;overflow:visible}
+.vue svg text{font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;fill:var(--ink3)}
+.vue .b{fill:var(--line2);transition:fill .3s}
+.vue .b.vu{fill:var(--ink2)}
+.vue .b.cur{fill:var(--or)}
+.vue .cache{fill:var(--bg);opacity:.72}
+.trois-col{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.trois-col div{padding-top:12px;box-shadow:inset 0 1px 0 0 var(--line)}
+.trois-col p{font-size:14px;color:var(--ink2);margin-top:6px}
+.curseur{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.curseur output{font-family:var(--f-mono);font-size:11px;color:var(--ink);min-width:6ch;text-align:right}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.spec{padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line)}
+.spec .rang{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:7px 0;box-shadow:inset 0 1px 0 0 var(--line);font-size:13px;color:var(--ink2)}
+.spec .rang:first-of-type{box-shadow:none}
+.mark{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 7px}
+.mark.devine{color:var(--or);box-shadow:inset 0 0 0 1px var(--line-or)}
+.mark.soupcon{color:var(--amb);box-shadow:inset 0 0 0 1px var(--amb)}
+.mark.ignore{color:var(--ink3);box-shadow:inset 0 0 0 1px var(--line2)}
+
+/* 04 le juge */
+.juge{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.juge .texte{padding:26px 28px;font-family:var(--f-script);font-size:15px;line-height:1.7;box-shadow:inset -1px 0 0 0 var(--line);background:var(--panel);min-width:0}
+.juge .texte .entete{font-weight:700;letter-spacing:.04em}
+.juge .texte .perso{display:block;margin:12px 0 0 34%;}
+.juge .texte .rep{display:block;margin:0 14% 0 18%}
+.juge .texte mark{background:var(--grn-bg);color:inherit;box-shadow:0 1px 0 0 var(--grn)}
+.juge .reponses{padding:26px 28px;display:grid;gap:14px;align-content:start;min-width:0}
+.rep-l{display:grid;gap:8px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line)}
+.rep-l .q{font-family:var(--f-cit);font-style:italic;font-size:16px}
+.rep-l .v{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.rep-l.ok{box-shadow:inset 0 0 0 1px var(--grn)}
+.rep-l.non{box-shadow:inset 0 0 0 1px var(--amb)}
+.verdict{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.rep-l.ok .verdict{color:var(--grn)}
+.rep-l.non .verdict{color:var(--amb)}
+.bt{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:11px 16px;box-shadow:inset 0 0 0 1px var(--line2);color:var(--ink)}
+.bt:hover{background:var(--panel2)}
+.bt.go{background:var(--or);color:var(--on-or);box-shadow:none}
+.bt.go:hover{filter:brightness(1.08)}
+
+/* 05 les personnages */
+.atelier{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.atelier>div{padding:26px 28px;min-width:0}
+.atelier>div:first-child{box-shadow:inset -1px 0 0 0 var(--line)}
+.fiche{display:grid;gap:8px;margin:14px 0 22px}
+.fiche p{font-family:var(--f-cit);font-style:italic;font-size:17px;color:var(--ink)}
+.situation{padding:18px 20px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+.situation dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:12px 0 0;font-size:14px}
+.situation dt{font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);padding-top:4px}
+.situation dd{margin:0;color:var(--ink2)}
+.options{display:grid;gap:8px;margin-top:16px}
+.options button{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;text-align:left;padding:13px 14px;box-shadow:inset 0 0 0 1px var(--line);font-size:15px;color:var(--ink2)}
+.options button b{font-family:var(--f-mono);font-weight:400;font-size:11px;color:var(--ink3);padding-top:2px}
+.options button:hover:not(:disabled){color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2)}
+.options button:disabled{cursor:default}
+.options button.choisi{color:var(--ink);box-shadow:inset 0 0 0 1px var(--cy);background:var(--cy-bg)}
+.negatif{display:grid;gap:16px;align-content:start}
+.negatif .attente{min-height:150px;display:grid;place-items:center;text-align:center;padding:24px;box-shadow:inset 0 0 0 1px var(--line);color:var(--ink3);font-size:14px}
+.barres{display:grid;gap:10px}
+.barres .r{display:grid;grid-template-columns:24px minmax(0,1fr) 46px;gap:12px;align-items:center;font-size:13px}
+.barres .r b{font-family:var(--f-mono);font-weight:400;color:var(--ink3)}
+.barres .r .t{height:22px;position:relative;box-shadow:inset 0 0 0 1px var(--line)}
+.barres .r .t i{position:absolute;inset:0 auto 0 0;background:var(--line2);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.barres .r.auteur .t i{background:var(--cy)}
+.barres .r .n{font-family:var(--f-mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.regards{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.regards div{display:grid;gap:6px}
+.regards .pile{height:70px;display:flex;flex-direction:column-reverse;box-shadow:inset 0 0 0 1px var(--line)}
+.regards .pile i{display:block}
+.regards span{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);line-height:1.3}
+.constat{padding:16px 18px;font-size:15px;line-height:1.5}
+.constat.attendu{box-shadow:inset 0 0 0 1px var(--amb);background:var(--amb-bg)}
+.constat.alui{box-shadow:inset 0 0 0 1px var(--grn);background:var(--grn-bg)}
+.registre{margin-top:28px}
+.registre ol{list-style:none;margin:12px 0 0;padding:0;display:grid}
+.registre li{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:16px;padding:12px 0;box-shadow:inset 0 1px 0 0 var(--line);font-size:14px;color:var(--ink2);align-items:baseline}
+.registre li .d{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;color:var(--ink3)}
+.registre li .e{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+
+/* 06 l'arche dans le temps */
+.frise{margin-top:44px}
+.frise .pas{display:grid;grid-template-columns:repeat(5,1fr);position:relative}
+.frise .pas::before{content:"";position:absolute;left:0;right:0;top:15px;height:1px;background:var(--line2)}
+.frise .pas button{position:relative;display:grid;gap:12px;justify-items:start;text-align:left;padding:0 14px 0 0;color:var(--ink2)}
+.frise .pas button i{width:31px;height:31px;display:grid;place-items:center;font-style:normal;font-family:var(--f-mono);font-size:10px;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line2)}
+.frise .pas button span{font-size:15px;line-height:1.3}
+.frise .pas button:hover{color:var(--ink)}
+.frise .pas button[aria-selected="true"]{color:var(--ink)}
+.frise .pas button[aria-selected="true"] i{background:var(--cy);color:var(--bg);box-shadow:none}
+.moment{display:grid;grid-template-columns:repeat(3,1fr);margin-top:30px;box-shadow:inset 0 0 0 1px var(--line)}
+.moment>div{padding:22px 22px;box-shadow:inset -1px 0 0 0 var(--line)}
+.moment>div:last-child{box-shadow:none}
+.moment p{font-size:15px;color:var(--ink2);margin-top:10px}
+.traces{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:46px}
+.traces div{display:grid;gap:10px;align-content:start}
+.traces svg{width:100%;height:70px;overflow:visible}
+.traces svg text{font-family:var(--f-mono);font-size:8px;fill:var(--ink3)}
+.traces p{font-size:14px;color:var(--ink2)}
+
+/* 07 la recherche */
+.trouves{display:grid;grid-template-columns:repeat(2,1fr);margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.trouves article{padding:24px 26px;box-shadow:inset -1px -1px 0 0 var(--line);display:grid;gap:10px;align-content:start}
+.trouves article p{font-size:15px;color:var(--ink2)}
+.trouves article .src{font-size:12px;color:var(--ink3)}
+.trouves article .tenu{font-family:var(--f-disp);font-size:clamp(22px,2.4vw,30px);line-height:1.1;color:var(--ink)}
+
+/* 08 inspirations */
+.strates{display:grid;margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.strates>div{display:grid;grid-template-columns:52px 220px minmax(0,1fr) 160px;gap:20px;align-items:baseline;padding:18px 22px;box-shadow:inset 0 -1px 0 0 var(--line)}
+.strates>div:last-child{box-shadow:none}
+.strates>div.main{background:var(--cy-bg)}
+.strates b{font-family:var(--f-mono);font-weight:400;font-size:11px;color:var(--ink3)}
+.strates h3{font-size:15px}
+.strates p{font-size:14px;color:var(--ink2)}
+.ontologie{margin-top:40px;overflow-x:auto}
+.ontologie table{border-collapse:collapse;width:100%;min-width:720px}
+.ontologie th{font-family:var(--f-mono);font-weight:400;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:0 14px 12px 0}
+.ontologie td{padding:12px 14px 12px 0;box-shadow:inset 0 1px 0 0 var(--line);font-size:14px;color:var(--ink2);vertical-align:top}
+.ontologie td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
+
+/* 09 les choix */
+.choix{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin-top:40px;box-shadow:inset 0 0 0 1px var(--line)}
+.choix fieldset{margin:0;border:0;padding:24px 26px;box-shadow:inset -1px -1px 0 0 var(--line);display:grid;gap:12px;align-content:start;min-width:0}
+.choix legend{padding:0;float:left;width:100%;margin-bottom:6px}
+.choix legend .lbl{display:block;margin-bottom:8px}
+.choix legend span{font-size:17px;font-weight:500;line-height:1.35}
+.choix .avis{font-size:13px;color:var(--ink3)}
+.choix label{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;font-size:14px;color:var(--ink2);cursor:pointer;padding:8px 10px;box-shadow:inset 0 0 0 1px var(--line)}
+.choix label:has(input:checked){color:var(--ink);box-shadow:inset 0 0 0 1px var(--cy);background:var(--cy-bg)}
+.choix input[type=radio]{accent-color:var(--cy);margin:3px 0 0}
+.choix textarea{width:100%;min-height:56px;resize:vertical;background:var(--panel);border:0;box-shadow:inset 0 0 0 1px var(--line);padding:10px 12px;font-size:14px}
+.choix textarea::placeholder{color:var(--ink3)}
+.envoi{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:22px}
+.envoi output{font-size:13px;color:var(--ink2)}
+#texte-reponses{width:100%;min-height:160px;margin-top:14px;background:var(--panel);border:0;box-shadow:inset 0 0 0 1px var(--line);padding:12px;font-family:var(--f-mono);font-size:12px}
+
+/* 10 journal */
+.journal{margin-top:36px;display:grid}
+.journal>div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;padding:14px 0;box-shadow:inset 0 1px 0 0 var(--line);font-size:14px;color:var(--ink2)}
+.journal .d{font-family:var(--f-mono);font-size:11px;color:var(--ink3);letter-spacing:.08em}
+.fichiers{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:30px;box-shadow:inset 0 0 0 1px var(--line)}
+.fichiers a{display:grid;gap:4px;padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:inset -1px -1px 0 0 var(--line);font-size:14px}
+.fichiers a span{font-family:var(--f-mono);font-size:10px;color:var(--ink3);word-break:break-all}
+.fichiers a:hover{background:var(--panel)}
+footer{padding:70px 0 50px;color:var(--ink3);font-size:13px}
+
+.bulle{position:fixed;z-index:50;pointer-events:none;max-width:280px;padding:10px 12px;background:var(--panel2);box-shadow:inset 0 0 0 1px var(--line2),0 10px 26px var(--ombre);font-size:13px;line-height:1.4;opacity:0;transition:opacity .15s}
+.bulle.on{opacity:1}
+
+@media (max-width:900px){
+  .etat{grid-template-columns:repeat(2,1fr)}
+  .etat>div{box-shadow:inset -1px -1px 0 0 var(--line)}
+  .trio,.atelier,.juge,.saison,.lectures,.trouves,.choix,.machines{grid-template-columns:1fr}
+  .machines>div{box-shadow:inset 0 -1px 0 0 var(--line)}
+  .trio>div,.atelier>div:first-child,.juge .texte,.carte,.lectures .liste{box-shadow:inset 0 -1px 0 0 var(--line)}
+  .regles{grid-template-columns:1fr 1fr}
+  .trois-col,.moment,.traces,.fichiers{grid-template-columns:1fr}
+  .moment>div{box-shadow:inset 0 -1px 0 0 var(--line)}
+  .strates>div{grid-template-columns:40px minmax(0,1fr)}
+  .strates>div p,.strates>div .lbl{grid-column:2}
+  .frise .pas{grid-template-columns:1fr;gap:16px}
+  .frise .pas::before{left:15px;right:auto;top:0;bottom:0;width:1px;height:auto}
+  .frise .pas button{grid-template-columns:31px 1fr;align-items:center}
+  .registre li{grid-template-columns:1fr}
+  .specs{grid-template-columns:1fr}
+  .journal>div{grid-template-columns:1fr;gap:4px}
+  .nuee .info{text-align:left}
+  .etat>div:last-child{grid-column:1/-1}
+}
+@media (max-width:520px){
+  .regles{grid-template-columns:1fr}
+  .regards{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .juge .texte .perso{margin-left:20%}
+  .juge .texte .rep{margin:0 4% 0 8%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<header class="barre">
+  <div class="wrap">
+    <span class="logo">Cinema Studio</span>
+    <nav class="som" aria-label="Sommaire">
+      <a href="#machines">trois machines</a>
+      <a href="#principe">la nuée</a>
+      <a href="#saison">la saison</a>
+      <a href="#lectures">les lectures</a>
+      <a href="#juge">le juge</a>
+      <a href="#personnages">personnages</a>
+      <a href="#arche">l'arche</a>
+      <a href="#recherche">la recherche</a>
+      <a href="#inspirations">inspirations</a>
+      <a href="#choix">tes choix</a>
+      <a href="#journal">journal</a>
+    </nav>
+    <button class="theme" id="theme" type="button">thème</button>
+  </div>
+</header>
+
+<main>
+<!-- 00 · l'ouverture -->
+<section class="hero" id="haut">
+  <div class="wrap">
+    <span class="lbl">Atelier · mis à jour le 24 octobre 2026, au soir</span>
+    <h1><span>Cinema Studio</span><span>La nuée</span></h1>
+    <p class="chapo">Le moteur de MiroFish, des centaines d'agents en parallèle, détourné pour <b>lire et développer l'écriture</b> : chaque lecteur voit une seule séquence, à travers un seul personnage, et ne répond qu'avec une citation exacte. Ce que tu vois ici, ce sont les 370 lecteurs de l'épisode 1 de Paris, les Années Folles, rangés par séquence.</p>
+    <div class="nuee" id="nuee">
+      <div class="tete">
+        <div class="leg"><span class="pastille" style="color:var(--ink2)"><i></i>un lecteur-personnage</span><span class="pastille" style="color:var(--cy)"><i></i>un lecteur-spectateur</span></div>
+        <div class="info" id="nuee-info"><span class="lbl">survole une colonne</span></div>
+      </div>
+      <div class="zone"><canvas id="toile" aria-label="Les lecteurs de l'épisode 1, une colonne par séquence"></canvas></div>
+    </div>
+    <div class="etat">
+      <div><b>3</b><span>études versées : la nuée, les inspirations, les personnages</span></div>
+      <div><b>493</b><span>séquences de la saison découpées et lues par le configurateur</span></div>
+      <div><b>2 926</b><span>lecteurs pour la saison entière, deux lectures par séquence</span></div>
+      <div><b>3</b><span>études prêtes à partir, une par machine ; aucune n'a encore tourné</span></div>
+      <div><b>7 / 8</b><span>choix tranchés le 24/10, <a href="#choix">un reste ouvert</a></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 00 · les trois machines -->
+<section class="pl" id="machines">
+  <div class="wrap">
+    <div class="num"><b>00</b><i></i><span class="lbl">en ce moment · ton « vas-y » du 24/10</span></div>
+    <h2>Trois machines, <em>trois études</em> en même temps</h2>
+    <p class="chapo">Les deux DGX et la RTX 3090 sont libres : chacune prend une étude. Chaque lancement passe ses gardes (aucun rendu en cours, assez de mémoire, le modèle répond) et refuse sinon. Les durées sont des estimations ; la vraie mesure sortira du journal.</p>
+    <div class="machines">
+      <div>
+        <div class="mach"><b>DGX2</b><span class="etat-m">prête</span></div>
+        <span class="lbl cy">les beats et les bascules</span>
+        <p>L'épisode 1 du 12 octobre, séquence par séquence, en blocs numérotés. Les beats avec leur fonction, la valeur en jeu, le pivot ; trois bascules au plus. Le juge vérifie la partition, les sept fonctions, chaque citation.</p>
+        <dl><dt>modèle</dt><dd>Qwen 27B · vLLM</dd><dt>volume</dt><dd>68 séquences × 2 lectures</dd><dt>durée</dt><dd>≈ 15 min</dd></dl>
+      </div>
+      <div>
+        <div class="mach"><b>DGX1</b><span class="etat-m">prête</span></div>
+        <span class="lbl cy">l'épreuve à monde figé</span>
+        <p>La nuit qui suit la mort de Coco. Huit personnages joués, chacun ne sachant que ce qu'il sait ; quatre chocs ; quatre tours d'actes et de répliques. Chaque épreuve est jouée aussi sans la fiche : l'écart dit ce que le personnage change.</p>
+        <dl><dt>modèle</dt><dd>Qwen 27B · vLLM</dd><dt>volume</dt><dd>40 parties · 1 280 actes</dd><dt>durée</dt><dd>≈ 30 min</dd></dl>
+      </div>
+      <div>
+        <div class="mach"><b>RTX 3090</b><span class="etat-m">prête</span></div>
+        <span class="lbl cy">le négatif à rebours</span>
+        <p>Victor, Lucie, Louis : quatre situations chacun, tirées de la bible. Quarante lecteurs disent ce qu'on attend. Ensuite tu réponds seul, sans le script, et on compare à ce que les huit épisodes font.</p>
+        <dl><dt>modèle</dt><dd>Qwen 2.5 14B · Ollama</dd><dt>volume</dt><dd>12 situations · 480 lecteurs</dd><dt>durée</dt><dd>≈ 15 min</dd></dl>
+      </div>
+    </div>
+    <p class="note" style="margin-top:16px">Le lancement : <a href="https://github.com/calculment0r/CINEMA_STUDIO/blob/main/09_CODE/nuee/LANCEMENT.md">09_CODE/nuee/LANCEMENT.md</a>. Éprouvé contre un faux modèle (quatre essais passent) ; les résultats viendront ici.</p>
+  </div>
+</section>
+
+<!-- 01 · le principe -->
+<section class="pl" id="principe">
+  <div class="wrap">
+    <div class="num"><b>01</b><i></i><span class="lbl">le principe</span></div>
+    <h2>Un configurateur, des lecteurs, <em>un juge</em></h2>
+    <p class="chapo">MiroFish simule une foule. Ce qui nous intéresse, c'est son moteur : beaucoup d'agents, chacun seul, chacun avec une vue limitée. La diversité vient de lecteurs qui ne se parlent pas ; un débat entre agents fabrique de l'accord, pas de la lecture.</p>
+    <div class="trio">
+      <div>
+        <div class="fig"><svg viewBox="0 0 200 92" aria-hidden="true">
+          <rect x="0" y="8" width="200" height="1" fill="var(--line2)"></rect>
+          <g id="fig-config"></g>
+          <text x="0" y="88">fiche → compte → ordre</text>
+        </svg></div>
+        <span class="lbl cy">le configurateur</span>
+        <h3>Il compte avant de lancer</h3>
+        <p>Il reçoit une fiche : le corpus découpé en séquences, la lecture choisie, la liste fermée de ce qu'on suit, le modèle local. Il compte les lecteurs et le temps, et ne lance que sur ton ordre.</p>
+      </div>
+      <div>
+        <div class="fig"><svg viewBox="0 0 200 92" aria-hidden="true" id="fig-lecteurs"></svg></div>
+        <span class="lbl cy">les lecteurs</span>
+        <h3>Chacun seul, chacun aveugle au reste</h3>
+        <p>Une séquence vue par un personnage présent, ou par le spectateur. Des questions fermées seulement, chaque réponse avec sa citation. Chaque séquence est lue deux fois, avec deux graines.</p>
+      </div>
+      <div>
+        <div class="fig"><svg viewBox="0 0 200 92" aria-hidden="true" id="fig-juge"></svg></div>
+        <span class="lbl cy">le juge</span>
+        <h3>Du code, pas un modèle</h3>
+        <p>Une citation introuvable mot pour mot est écartée. Ce que disent les deux lectures est solide, le reste fragile. Tout sort au vivier, marqué inféré : jamais dans ton texte, jamais sur le mur.</p>
+      </div>
+    </div>
+    <div class="regles">
+      <div><span class="lbl">règle</span><b>Questions fermées</b><p>Les modèles locaux voient mal ce qui manque : on vérifie une liste, on ne demande jamais « qu'est-ce qui cloche ».</p></div>
+      <div><span class="lbl">règle</span><b>Une citation ou rien</b><p>Avec une ossature écrite, les affirmations fausses tombent de 36 % à 6 % (étude « narration computationnelle »).</p></div>
+      <div><span class="lbl">règle</span><b>L'auteur écrit, la machine vérifie</b><p>Le qui sait quoi est écrit par toi ; la machine signale un écart avec le texte, en ambre, et ne corrige jamais.</p></div>
+      <div><span class="lbl">règle</span><b>Tout en local, sur ordre</b><p>Un modèle ouvert sur les DGX, après les gardes : aucun rendu en file, assez de mémoire libre.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · la saison -->
+<section class="pl" id="saison">
+  <div class="wrap">
+    <div class="num"><b>02</b><i></i><span class="lbl">la saison, séquence par séquence</span></div>
+    <h2>Qui est là, <em>qui lit</em></h2>
+    <p class="chapo">Les huit épisodes de Paris, les Années Folles (épisodes 1 à 4 en version du 12 et du 19 octobre, 5 à 8 en version de septembre), découpés par le configurateur. Une ligne par personnage suivi, une colonne par séquence, un trait quand il est présent. Choisis un épisode, touche une séquence : tu vois ses lecteurs.</p>
+    <div style="margin-top:34px" class="onglets" id="onglets-ep" role="group" aria-label="Épisode"></div>
+    <div class="saison">
+      <div class="carte">
+        <div class="defil"><svg id="carte" role="img" aria-label="Présence des personnages par séquence"></svg></div>
+      </div>
+      <div class="config">
+        <span class="lbl">le configurateur · chiffrage</span>
+        <div><div class="gros" id="cfg-lecteurs">370</div><span class="note">lecteurs pour les épisodes cochés</span></div>
+        <div class="eps" id="cfg-eps"></div>
+        <div class="ligne2"><span>séquences</span><b id="cfg-seq">69</b></div>
+        <div class="ligne2"><span>lectures en parallèle</span><b id="cfg-par-v">4</b></div>
+        <input type="range" id="cfg-par" min="1" max="12" value="4" aria-label="Lectures en parallèle">
+        <div class="ligne2"><span>temps estimé</span><b id="cfg-temps">0 h 31</b></div>
+        <p class="note">20 secondes par lecteur, une estimation : la vraie mesure sortira du premier lancement.</p>
+        <div class="scene-info" id="scene-info"><span class="lbl">séquence</span><p style="margin-top:8px">Touche une colonne de la carte.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · les lectures -->
+<section class="pl" id="lectures">
+  <div class="wrap">
+    <div class="num"><b>03</b><i></i><span class="lbl">les quatre lectures</span></div>
+    <h2>Ce que chaque lecteur <em>a le droit de voir</em></h2>
+    <p class="chapo">Le moteur ne change pas, la vue change. Une lecture se définit par ce qu'un lecteur reçoit, ce qu'il rend, et ce que le juge vérifie.</p>
+    <div class="lectures">
+      <div class="liste" role="tablist" id="liste-lectures"></div>
+      <div class="lecture" id="lecture" role="tabpanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · le juge -->
+<section class="pl" id="juge">
+  <div class="wrap">
+    <div class="num"><b>04</b><i></i><span class="lbl">le juge</span></div>
+    <h2>Une citation se trouve <em>mot pour mot</em>, ou elle tombe</h2>
+    <p class="chapo">Le juge ne lit pas, il compare. Ici une scène inventée pour l'exemple et trois réponses de lecteurs. Lance le juge.</p>
+    <div class="juge">
+      <div class="texte" id="juge-texte">
+        <span class="exemple">exemple inventé</span><br><br>
+        <span class="entete">INT. CABINE DE PROJECTION — NUIT</span><br>
+        Le projecteur claque. Mado rembobine une bobine à la main. Son frère Jo pose une enveloppe sur la table de montage.
+        <span class="perso">JO</span>
+        <span class="rep">C'est pour la salle. Ne me demande pas d'où ça vient.</span>
+        <span class="perso">MADO</span>
+        <span class="rep">Je ne demande jamais rien. C'est toi qui racontes toujours trop.</span>
+        Elle ne touche pas l'enveloppe.
+      </div>
+      <div class="reponses" id="juge-reps"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · les personnages -->
+<section class="pl" id="personnages">
+  <div class="wrap">
+    <div class="num"><b>05</b><i></i><span class="lbl">développer un personnage · dès le premier jour</span></div>
+    <h2>L'auteur signe un choix, la nuée dessine <em>ce qu'on attendait</em></h2>
+    <p class="chapo">Un modèle qui joue un personnage le ramène à la moyenne : c'est mesuré. Alors on s'en sert. Trois phrases suffisent ; la machine fabrique une <b>situation à choisir</b>, quarante lecteurs disent ce que tout le monde attend, toi tu choisis sans les voir. Là où tu t'écartes, le personnage est à toi.</p>
+    <div class="atelier">
+      <div>
+        <span class="exemple">exemple inventé · rien n'a tourné</span>
+        <div class="fiche">
+          <span class="lbl" style="margin-top:18px">ce que l'auteur a écrit de Mado, trois phrases</span>
+          <p>Elle veut racheter le cinéma où elle est projectionniste.</p>
+          <p>Elle ne ment jamais à son frère.</p>
+          <p>Elle déteste devoir quelque chose à quelqu'un.</p>
+        </div>
+        <div class="situation">
+          <span class="lbl cy">la situation que propose la machine</span>
+          <dl>
+            <dt>conflit</dt><dd>racheter la salle contre ne rien devoir à personne</dd>
+            <dt>lieu</dt><dd>la cabine de projection, pendant l'entracte</dd>
+            <dt>partenaire</dt><dd>Jo, son frère, qui pose l'argent sur la table</dd>
+            <dt>en position haute</dt><dd>Jo</dd>
+          </dl>
+        </div>
+        <span class="lbl" style="display:block;margin-top:20px">que fait Mado ? choisis, tu ne vois pas la nuée</span>
+        <div class="options" id="options"></div>
+      </div>
+      <div class="negatif" id="negatif">
+        <span class="lbl">le négatif · ce qu'attendaient 40 lecteurs</span>
+        <div class="attente" id="attente">La nuée a déjà répondu. Elle reste cachée tant que tu n'as pas choisi.</div>
+      </div>
+    </div>
+    <div class="registre">
+      <span class="lbl">le registre de Mado · ses choix signés, datés</span>
+      <ol id="registre"><li><span class="d">—</span><span>Aucun choix encore. Chaque choix signé s'ajoute ici ; leur suite, c'est le caractère.</span><span></span></li></ol>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · l'arche -->
+<section class="pl" id="arche">
+  <div class="wrap">
+    <div class="num"><b>06</b><i></i><span class="lbl">l'arche, du pitch au script</span></div>
+    <h2>Les mêmes outils, <em>du premier jour au dernier</em></h2>
+    <p class="chapo">Un seul registre traverse le projet : d'abord les choix signés et datés ; la blessure, le besoin, le mensonge et la vérité restent des champs à côté (ta décision du 24/10). Les outils s'ouvrent selon ce qui existe déjà.</p>
+    <div class="frise">
+      <div class="pas" role="tablist" id="pas"></div>
+    </div>
+    <div class="moment" id="moment" role="tabpanel"></div>
+    <div class="traces">
+      <div>
+        <svg viewBox="0 0 300 70" aria-hidden="true" id="tr-choix"></svg>
+        <span class="lbl cy">trace 1 · les choix</span>
+        <p>Ce que le personnage choisit au début et à la fin, face à des situations de même nature.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 300 70" aria-hidden="true" id="tr-sait"></svg>
+        <span class="lbl cy">trace 2 · qui sait quoi</span>
+        <p>Ce qu'il apprend, et quand. Tu l'écris, la machine vérifie que le texte le porte.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 300 70" aria-hidden="true" id="tr-statut"></svg>
+        <span class="lbl cy">trace 3 · le statut</span>
+        <p>Scène par scène : qui monte, qui descend, ce qu'il fait à l'autre. Un arc plat se voit aussi bien qu'une transformation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · la recherche -->
+<section class="pl" id="recherche">
+  <div class="wrap">
+    <div class="num"><b>07</b><i></i><span class="lbl">ce que dit la recherche</span></div>
+    <h2>Six résultats <em>qui décident</em> de la forme</h2>
+    <p class="chapo">Lus dans les extraits des moteurs de recherche, les pages elles-mêmes n'ayant pas pu être ouvertes depuis la machine : les chiffres restent à vérifier sur l'article avant d'être cités dehors.</p>
+    <div class="trouves">
+      <article><span class="lbl">la moyenne</span><span class="tenu">26 traits écrits, les plus stéréotypés survivent</span><p>Un modèle qui joue un personnage n'en garde que le cliché ; les modèles les plus fidèles par personnage donnent les distributions les plus stéréotypées.</p><span class="src">The Chameleon's Limit, arXiv 2604.24698</span></article>
+      <article><span class="lbl">la dérive</span><span class="tenu">Le modèle l'emporte sur le personnage</span><p>Des histoires rejouées dérivent vers plus plat, plus froid. Quand le personnage et le modèle sans personnage divergent, c'est le modèle qui gagne : c'est notre ligne de base.</p><span class="src">ANIMASK, arXiv 2609.16667</span></article>
+      <article><span class="lbl">le méchant</span><span class="tenu">Plus la morale baisse, plus le jeu baisse</span><p>Un antagoniste joué par un modèle aligné devient une agressivité de surface.</p><span class="src">Too Good to be Bad, arXiv 2511.04962</span></article>
+      <article><span class="lbl">qui sait quoi</span><span class="tenu">62 %, même pour le meilleur modèle</span><p>Garder un secret, ne pas savoir ce qu'on ne devrait pas savoir : c'est le point faible. Le remède qui tient est l'architecture, chaque agent ne reçoit que sa part.</p><span class="src">Sotopia-ToM, arXiv 2605.02307 ; FANToM ; Hi-ToM</span></article>
+      <article><span class="lbl">les auteurs</span><span class="tenu">Une interlocutrice, pas une plume</span><p>Quinze professionnels sur Dramatron : pas de sous-texte, propriété floue. Interroger son personnage aide, mais ce qu'un modèle dit d'un personnage ne prédit pas ce qu'il lui fait faire.</p><span class="src">Dramatron (CHI 2023) ; CharacterMeet (CHI 2024)</span></article>
+      <article><span class="lbl">la cueillette</span><span class="tenu">La simulation produit, l'auteur choisit</span><p>Les jeux à « physique sociale » ont déjà la bonne posture : une chronique abondante, un outil qui relève les enchaînements improbables, l'auteur qui cueille.</p><span class="src">Kreminski (Felt, Winnow) ; Versu ; Comme il Faut</span></article>
+    </div>
+    <p class="note" style="margin-top:20px">Côté métier : McKee (le caractère se révèle dans le choix sous pression), Johnstone (le statut), Stanislavski (l'objectif), Mike Leigh (des acteurs qui ne savent que ce que sait leur personnage), et la critique du « trauma plot » de Parul Sehgal (The New Yorker, 2021). Tout est sourcé dans les rapports du chantier.</p>
+  </div>
+</section>
+
+<!-- 08 · inspirations -->
+<section class="pl" id="inspirations">
+  <div class="wrap">
+    <div class="num"><b>08</b><i></i><span class="lbl">ce qu'on reprend de tes trois dépôts</span></div>
+    <h2>Un agent, <em>cinq strates</em></h2>
+    <p class="chapo">Lu dans onward, showrunner-v1 et ShowRunner, comme inspiration seulement. Les deux premières strates s'écrivent à la main ; les trois autres sont un moteur commun à tous les postes, et le modèle se change sans réécrire un poste.</p>
+    <div class="strates">
+      <div class="main"><b>1</b><h3>Le ghost</h3><p>Qui il est : une fonction de transfert, pas une psychologie. Quatre mécanismes ; s'ils se contredisent, l'agent est un costume.</p><span class="lbl cy">à la main</span></div>
+      <div class="main"><b>2</b><h3>L'ontologie du métier</h3><p>Comment il découpe le réel : posture, substance, axes, la frontière entre une décision et un détail, l'objet qu'il garde.</p><span class="lbl cy">à la main</span></div>
+      <div><b>3</b><h3>La juridiction</h3><p>Décide seul, se concerte, remonte au show runner en options. Le partage entre postes se vérifie par machine.</p><span class="lbl">moteur commun</span></div>
+      <div><b>4</b><h3>L'orchestration</h3><p>Le cycle d'une intention en sept étapes ; un seul pipeline modulé par la maturité du projet, sept axes, jamais une note globale.</p><span class="lbl">moteur commun</span></div>
+      <div><b>5</b><h3>La mémoire</h3><p>L'identité figée, l'historique des projets, la relation avec ce show runner. Un registre où l'on ajoute sans jamais effacer.</p><span class="lbl">moteur commun</span></div>
+    </div>
+    <div class="ontologie">
+      <table>
+        <thead><tr><th>famille</th><th>notions</th><th>source</th></tr></thead>
+        <tbody>
+          <tr><td>le ton</td><td>le lexique, la construction, la vision du monde</td><td>onward, showrunner-v1</td></tr>
+          <tr><td>l'imaginaire</td><td>les trois régimes de Durand, images permises et exclues</td><td>onward, showrunner-v1</td></tr>
+          <tr><td>les forces</td><td>le schéma actantiel de Greimas, la case vide</td><td>showrunner-v1</td></tr>
+          <tr><td>le monde</td><td>flux, rapports de force, lignes de fracture, zones mortes</td><td>onward, showrunner-v1</td></tr>
+          <tr><td>les archétypes</td><td>probables et manquants, toujours des hypothèses (attribution à vérifier)</td><td>onward, showrunner-v1</td></tr>
+          <tr><td>qui sait quoi</td><td>secret personnel, choc collectif, graine puis révélation, mystère central</td><td>onward</td></tr>
+          <tr><td>le lore</td><td>trois chronologies (monde, production, révélation), certitude diégétique</td><td>showrunner-v1, Lore Builder</td></tr>
+          <tr><td>les beats</td><td>sept fonctions, la bascule comme point dans un beat, le contrat de séquence</td><td>dossier « Beats et découpage »</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · les choix -->
+<section class="pl" id="choix">
+  <div class="wrap">
+    <div class="num"><b>09</b><i></i><span class="lbl">ce qui reste à toi</span></div>
+    <h2>Huit choix, <em>sept tranchés</em></h2>
+    <p class="chapo">Tes réponses du 24 octobre sont au registre des deux chantiers. Le mot dans le schéma reste ouvert. Tu peux changer une réponse ici, puis copier et coller dans la session.</p>
+    <form class="choix" id="form-choix"></form>
+    <div class="envoi">
+      <button class="bt go" type="button" id="copier">Copier mes réponses</button>
+      <output id="copie-etat"></output>
+    </div>
+    <textarea id="texte-reponses" readonly hidden aria-label="Tes réponses en texte"></textarea>
+  </div>
+</section>
+
+<!-- 10 · journal -->
+<section class="pl" id="journal">
+  <div class="wrap">
+    <div class="num"><b>10</b><i></i><span class="lbl">journal et fichiers</span></div>
+    <h2>Où on en est</h2>
+    <div class="journal">
+      <div><span class="d">24/10 · nuit</span><span>Tes huit réponses : les beats d'abord, Qwen 27B, « vas-y » ; faire jouer les personnages, garder blessure, besoin, mensonge et vérité, les deux bancs, l'épreuve maintenant. Trois études écrites, une par machine, éprouvées contre un faux modèle, prêtes à partir.</span></div>
+      <div><span class="d">24/10 · soir</span><span>Étude « personnages » : développer un personnage et son arche dès le début d'un projet. Trois lectures (le métier, la recherche, ton corpus) et la proposition du négatif.</span></div>
+      <div><span class="d">24/10 · après-midi</span><span>Synthèse des inspirations (onward, showrunner-v1, ShowRunner) : les cinq strates, la coordination, la lecture, l'ontologie.</span></div>
+      <div><span class="d">24/10 · midi</span><span>Tout passe dans CINEMA_STUDIO : le code de la nuée dans 09_CODE, les huit épisodes à jour dans le corpus du projet, les règles du dépôt changées.</span></div>
+      <div><span class="d">24/10 · matin</span><span>Chantier « la nuée » : le moteur de MiroFish au service de la lecture. Configurateur, lecteurs, juge écrits et éprouvés contre un faux modèle (trois essais passent).</span></div>
+    </div>
+    <div class="fichiers">
+      <a href="https://github.com/calculment0r/CINEMA_STUDIO/blob/main/08_CHANTIERS/2026-10-24_nuee/BRIEF.md">La nuée, le chantier<span>08_CHANTIERS/2026-10-24_nuee/BRIEF.md</span></a>
+      <a href="https://github.com/calculment0r/CINEMA_STUDIO/blob/main/08_CHANTIERS/2026-10-24_personnages/BRIEF.md">Les personnages, l'étude<span>08_CHANTIERS/2026-10-24_personnages/</span></a>
+      <a href="https://github.com/calculment0r/CINEMA_STUDIO/blob/main/05_ETUDES/inspirations-mode-agentique.md">Les inspirations<span>05_ETUDES/inspirations-mode-agentique.md</span></a>
+      <a href="https://github.com/calculment0r/CINEMA_STUDIO/tree/main/09_CODE/nuee">Le code de la nuée<span>09_CODE/nuee/</span></a>
+      <a href="https://github.com/calculment0r/CINEMA_STUDIO/tree/main/04_METHODES/references">Les références lues<span>04_METHODES/references/</span></a>
+      <a href="https://github.com/calculment0r/CINEMA_STUDIO/tree/main/08_CHANTIERS">Tous les chantiers<span>08_CHANTIERS/</span></a>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Cinema Studio · atelier de conception. Rien sur cette page n'est un résultat de modèle : les chiffres sont des comptes du configurateur, les exemples sont marqués.</div></footer>
+<div class="bulle" id="bulle" role="status"></div>
+
+<script>
+const PRESENCE = {"ids":["victor","simone","lucie","louis","raoul","suzanne","marie","james","auguste","justine","rodolphe","littre","zamaron","hercule","eugene"],"eps":{"1":[["101",[],309],["102A",[],234],["102B",[0,2,7,9],3882],["103",[1,3,13],1984],["104",[],434],["105A",[2],766],["105B",[],88],["105C",[],927],["105D",[0,1,3,4],1169],["106",[0,4],475],["107",[0,1,2,3,7],5004],["108",[0,1,12],2227],["109",[2],153],["110A",[2],625],["110B",[2,5],1031],["111",[2],104],["112",[0,1],1674],["113",[0,1],931],["114",[0,1],760],["115",[2,8],678],["116",[],13],["117",[0,3],1786],["118",[0,4],477],["119",[0,1],766],["120A",[1],40],["120B",[1],387],["121",[2,5,6],3195],["122",[1,12],3013],["123",[4],263],["124",[0,1],2634],["125",[],13],["126",[2],115],["127",[2],148],["128",[],12],["129",[0,3,13],2328],["130",[2,5,6],2533],["131",[2],285],["132",[0,3,13],472],["133",[4,7],1977],["134",[],13],["135",[1],1202],["136",[],0],["137",[0,3,4],1235],["138",[0,2,4],623],["139",[0,2,4,7],3363],["140",[0,3,4,13],1366],["141",[0,2,4,7],1207],["142",[0],220],["143",[0,4],217],["144",[0],467],["145",[],141],["146",[0],111],["147",[2],120],["148",[1],200],["149",[0],223],["150",[0],468],["151",[0],382],["152",[0,2,3,7],632],["153",[0,4],977],["154",[0,4],785],["155",[0],291],["156",[0,4],1621],["157",[],13],["158",[1],1190],["159",[0,2,3,7],1135],["160",[2,7],805],["161",[1],1475],["162",[0,3,4],1737],["163",[1],359]],"2":[["201",[0,3,4,13],2255],["202",[2,7],618],["203",[2,7],1188],["204A",[],12],["204B",[1],666],["204C",[1],4247],["205",[0,3,4],2076],["206",[0,3,4],1281],["207",[2],170],["208",[2,5,6],568],["209",[2,5],462],["210",[5,6],114],["211",[2,5,6],2248],["212",[],13],["213",[0,1],2647],["214",[0,1,4,7],2317],["215",[0,4],1467],["216",[2,7],3476],["217",[],49],["218",[0,13],646],["219",[0,3],680],["220A",[0],727],["220B",[0,4],142],["221",[1],2516],["222",[0,4],3083],["223",[0,1],1857],["224A",[3,13],754],["224B",[3,4],819],["225",[2,5,6],1952],["226",[1,2,6],2702],["227",[],59],["228",[0,3,4,13],1839],["229",[],516],["230",[0],392],["231",[0],925],["232",[2,5,6,7],2096],["233",[0,3,4],2048],["234",[0,2,7],3550],["235",[],13],["236",[1,14],187],["237",[1,14],1579],["238",[2,6],1587],["239",[0,4],1359],["240A",[2,3],1032],["240B",[0,4],817],["241",[1,2],1766],["242",[1,2],1000],["243",[5,6],306],["244",[0,3,4],530],["245",[1,2],87],["246",[0,1],154],["247",[5,6],360],["248",[2,7],1174],["249",[0,1],281],["250",[0,4],379],["251",[0,1],100],["252",[0,2],450],["253",[0,1],1133],["254",[2,7],105],["255",[],377],["256",[5],544],["257",[0,1],536]],"3":[["301A",[0],467],["301B",[],600],["302A",[0,1],1309],["303",[0,1],602],["302B",[0,1],788],["304",[0,3,4],4044],["305A",[2],96],["305B",[2,6],1445],["306A",[2,5,8],1446],["307",[2,8],253],["306B",[2,6],286],["308",[1,14],3810],["309",[0,3,4],1383],["310",[0,2,7],1700],["311",[2,7],2426],["312",[0],2118],["313",[1],3511],["314",[1],2562],["315",[2],30],["316",[2],407],["317",[0,1],2074],["318",[2,7],2734],["319",[0,3,4],2747],["320",[0,1,2],718],["321",[],165],["322",[3],673],["323",[3,4,13],1743],["324",[1],2036],["325",[0,3],852],["326",[0],188],["327",[0,4],274],["328",[0,4],1771],["329",[0],1567],["330",[0,3,4],1329],["331",[0],401],["332",[0,3],713],["333",[1],2020],["334",[2],434],["335",[2],2474],["336",[0],1329],["337",[1],1862],["338",[1],274],["339",[1,14],1109],["340",[2],221],["341",[0,2,7],1873],["342",[0,3,4,13],914],["343",[1,2],160],["344",[1,2,7,8],3474],["345",[0,4],130],["346",[1,2,8],1384],["347",[1,2,7,9],2344],["348",[1,14],1539],["349",[2],578],["350",[0,4],3917],["351",[3],335],["352A",[],170],["352B",[],201]],"4":[["401",[],184],["402",[0,3,4,9],3273],["403A",[0,1],1623],["403B",[1],285],["404",[2,7],2265],["405A",[0,1,3],2765],["405B",[0,3,13],938],["406",[],0],["407",[1],1737],["408",[1],213],["409",[0,1,2,8],4254],["410A",[0,3,4,13],2751],["410B",[0,3,4,13],3961],["411",[1,2,8],3728],["412",[2,8],127],["413",[2,8],958],["414",[1],136],["415",[0,1,4],4362],["416",[0,1,2,8,9,10],3215],["417",[1,2,7],1324],["418",[1,2,7],1593],["419A",[0,3,4,9,10],1797],["419B",[0,3],743],["420",[0,1,14],2538],["421",[2],62],["422",[0,3],318],["423",[1],208],["424",[3],253],["425",[2],225],["426",[0,3,4,9,10,13],2414],["427",[1,14],993],["428",[2,5],390],["429",[2,5,6],1483],["430",[2,5,6],3182],["431",[1],584],["432",[1,14],1741],["433",[0,4],813],["434",[0,3,9,10],3970],["435A",[1],203],["435B",[1],819],["436",[0,3],453],["437",[0,3],152],["438",[0,3],115],["439",[0,3],209],["440",[0,3,4,13],1824],["441",[0,4],205],["442",[0,3],355],["443",[0,3],1887],["444",[0,3],904],["445",[1],161],["446",[1],707],["447A",[0],257],["447B",[0],422],["448A",[0,12],1192],["448B",[3],155],["449",[2,5,6],944],["450",[1,2,8],390]],"5":[["501",[1,8],2639],["502",[1,8],1709],["503",[1,8],2658],["504",[],37],["505",[0,13],1931],["506",[0,4],2187],["507",[2,8],2533],["508",[0],163],["509",[0,1,14],2891],["510",[2],165],["511",[0,3,4],3644],["512",[],82],["513",[2],1414],["514",[0,4],587],["515",[1,2,8],551],["516",[1,2,8],4957],["517",[],63],["518",[2,7],1277],["519",[1],79],["520",[0,1],4489],["521",[2,5,6],1116],["522",[0,4],1712],["523",[0,1],361],["524",[0,4],354],["525",[0],261],["526",[1],280],["527",[0],366],["528",[2,5,6,8],895],["529",[0],382],["530",[1],122],["531",[0],161],["532",[2,5,6,8],589],["533",[4,12],652],["534",[0],342],["535",[0],218],["536",[0,1],2697],["537",[],172],["538",[0,1],336],["539",[0,1],461],["540",[0,1],433],["541",[0],288],["542",[0,1],222],["543",[0,1],322],["544",[0,1],275],["545",[0,1],699],["546",[],53],["547",[0,1],1520],["548",[],12],["549",[2,5,6,8],3149],["550",[0,1],485],["551",[0,1],705],["552",[2,5,6,8],1358],["553",[0,4],1939],["554",[0,3],1210],["555",[5,8],1570],["556",[0],1916],["557A",[1,4],491],["558",[0,1,4],386],["557B",[0,1],303]],"6":[["601",[0],235],["602A",[0,4],588],["603A",[4],372],["602B",[0,4],335],["603B",[4,6],201],["602C",[0,4],371],["603C",[4],96],["602D",[0,4],873],["604",[2,6,9],3449],["605",[2,5,6,8],3116],["606",[],13],["607",[0,1],1439],["608",[0,3,4],520],["609",[0,4,11],2194],["610",[0,1],1176],["611",[2,6],2149],["612",[0,3,4,13],2533],["613",[],12],["614",[1,14],3176],["615",[0,3],3271],["616",[2,7],1863],["617",[0,2],1210],["618",[0,1,2],1246],["619",[],12],["620",[3,4,13],2481],["621",[],48],["622",[2,6,9,10],1752],["623",[1,14],2179],["624",[2,6,9,10],2389],["625",[5],841],["626A",[0,3],488],["627",[0],155],["626B",[0,3,4],324],["628",[4],134],["626C",[0],63],["629",[],58],["630",[0],1041],["631",[3,4],243],["632",[1,14],176],["633",[2],322],["634",[6],53],["635",[3,4],810],["636",[1,14],513],["637",[0],277],["638",[5,8],237],["639",[1,14],1881],["640",[],12],["641",[5,8],2957],["642",[0],288],["643A",[0],1706],["644",[0,4],122],["643B",[0],294],["645",[],111],["646",[6,9,10],669],["647",[2,6],758],["648",[5],623],["649",[],605],["650",[1,11,14],1288],["651",[1,14],3884],["652",[2,5,6,9,10],3761],["653",[0,3],1313],["654",[1],1014],["655",[2,7],407],["656",[3,4],826],["657",[2,3,4],778],["658",[0,3],628],["659",[2,5,6],285],["660",[],206],["661",[2,5],83],["662",[5],215],["663A",[2],127],["664A",[8],174],["663B",[2],99],["664B",[8],315],["663C",[2],76],["664C",[8],106],["663D",[2,5,6],308],["664D",[],100]],"7":[["701",[3,4,13],1663],["702",[0],265],["703",[2,3,4,7,9],2620],["704",[0,3],1875],["705",[1,2,4,9,12],1792],["706",[0,1],1886],["707",[2,3,4],243],["708",[],156],["709",[2,9],2714],["710",[3,4,13],3252],["711",[1,2,4,5,6,7,9],4021],["712",[1,2,5,6,7,9],1360],["713",[1,2],2503],["714",[3,13],1040],["715",[3,13],1892],["716",[1,5,8,11],1787],["717",[2,5,6],413],["718",[],19],["719",[2,5,6],2266],["720",[2,6],1828],["721",[0,1],306],["722",[2,5,9],2385],["723",[1,11],792],["724",[1,11],866],["725",[0,1,11],2226],["726",[8,9,10,11],2991],["727",[0,1,11],2290],["728",[],13],["729",[3,4,13],1492],["730A",[0,1,8],582],["731",[1,2,9,10],176],["730B",[0,1,11],1563],["732",[1],274],["733",[3,13],143],["734",[2],158],["735",[3],311],["736",[0],234],["737",[2,9],280],["738",[2,9],165],["739",[2,9],1315],["740",[],25],["741",[2,5,6],1614],["742",[],13],["743A",[0,3,13],1707],["744",[2,6,9],233],["743B",[0,3,13],195],["745",[2,9],256],["743C",[0,3],1022],["746",[1,2,9],1244],["747",[0],344],["748A",[0,4],1555],["749",[3,4,13],185],["748B",[0,3,4],1493],["750",[9,11],1202]],"8":[["801",[0,3,4],3380],["802",[1],324],["803",[1],225],["804",[1,12],1521],["805",[1,12],250],["806",[1,12],942],["807",[0,4],1237],["808",[1,2],1440],["809",[0,1,3],1360],["810",[0,1],1366],["811",[],13],["812",[1,2,3,9],325],["813",[2,3],893],["814",[1,2,9],4309],["815",[],12],["816",[0,3,4],1871],["817",[2,9,10,11],1718],["818",[2],188],["819",[0,3],291],["820",[2],240],["821",[0,1,3,4],643],["822",[2],184],["823",[0,1,3,4],1543],["824",[],13],["825",[2,9,10],1234],["826",[0,1,3,4],4614],["827",[1],1589],["828",[1],1334],["829",[0,1,3,4],1911],["830",[1,3],162],["831",[3,4],268],["832",[],38],["833",[0,3],108],["834",[0,1,3,4],1534],["835",[],12],["836",[2,9,10],1163],["837",[1,12],75],["838",[0,1,3,4],683],["839",[1,9],1312],["840",[1,2,9,10],389],["841",[0,3,4],179],["842",[0,1,2,9,10],2634],["843",[0,3,4,12],2842],["844A",[0,1,2,9,10,12],1225],["845",[1],108],["844B",[1,2,9],118],["846",[0,1,2,9,10],806],["847",[0,4,12],2735],["848",[1,2,6],885],["849A",[0,12],546],["850",[],520],["849B",[0,12],1904],["851",[1],1300],["852",[1],696],["853",[3],60],["854",[0,3],469],["855",[0,1,2,3,6,7],3031]]}};
+const NOMS = {victor:'Victor',simone:'Simone',lucie:'Lucie',louis:'Louis',raoul:'Raoul',suzanne:'Suzanne',marie:'Marie',james:'James',auguste:'Auguste',justine:'Justine',rodolphe:'Rodolphe',littre:'Littré',zamaron:'Zamaron',hercule:'Hercule',eugene:'Eugène'};
+// Le plan du configurateur (nuee.py plan), épisode par épisode : lecteurs, deux lectures comprises.
+const PLAN = {1:370,2:362,3:316,4:368,5:330,6:426,7:370,8:384};
+const SEC_PAR_LECTEUR = 20;
+const $ = (s, r = document) => r.querySelector(s);
+const sv = (t, a = {}) => { const e = document.createElementNS('http://www.w3.org/2000/svg', t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const garde = { lire(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, ecrire(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const bulle = $('#bulle');
+function montrer(html, x, y) { bulle.innerHTML = html; bulle.classList.add('on'); const w = bulle.offsetWidth; bulle.style.left = Math.min(x + 14, innerWidth - w - 12) + 'px'; bulle.style.top = (y + 16) + 'px'; }
+function cacher() { bulle.classList.remove('on'); }
+
+/* thème */
+(() => {
+  const b = $('#theme'); const root = document.documentElement;
+  const t = garde.lire('cs-theme'); if (t) root.dataset.theme = t;
+  const lib = () => { b.textContent = (root.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')) === 'light' ? 'thème sombre' : 'thème clair'; };
+  lib();
+  b.addEventListener('click', () => { const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'); root.dataset.theme = cur === 'light' ? 'dark' : 'light'; garde.ecrire('cs-theme', root.dataset.theme); lib(); dessinerTout(); });
+})();
+
+/* 00 · la nuée : les lecteurs de l'épisode 1 se rangent en colonnes, une par séquence */
+const toile = $('#toile'); const ctx = toile.getContext('2d');
+let points = [], colonnes = [], survol = -1, anim = 0;
+function preparerNuee() {
+  const r = toile.getBoundingClientRect(); const dpr = devicePixelRatio || 1;
+  toile.width = r.width * dpr; toile.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const sc = PRESENCE.eps['1']; const W = r.width, H = r.height; const pas = W / sc.length; const rayon = Math.max(1.3, Math.min(2.6, pas * 0.22)); const pile = Math.max(...sc.map((s) => (s[1].length + 1) * (pas > 8 ? 1 : 2))); const dy = Math.min(rayon * 5, (H - 14) / pile);
+  const anciens = points; points = []; colonnes = [];
+  sc.forEach((s, i) => {
+    const n = s[1].length + 1; // un lecteur par personnage présent, plus le spectateur
+    const x = pas * i + pas / 2; colonnes.push({ x, pas, code: s[0], pres: s[1] });
+    for (let g = 0; g < 2; g++) for (let k = 0; k < n; k++) {
+      const rang = g * n + k; const tx = x + (g ? rayon * 1.2 : -rayon * 1.2) * (pas > 8 ? 1 : 0.5); const ty = H - 6 - (k + 0.5) * dy * (pas > 8 ? 1 : 1) - (pas > 8 ? 0 : g * n * dy);
+      const spec = k === n - 1; const p = anciens[points.length];
+      points.push({ tx, ty, x: p ? p.x : Math.random() * W, y: p ? p.y : 40 + Math.random() * (H * 0.55), vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6, spec, col: i, r: rayon, d: Math.random() * 900 });
+    }
+  });
+}
+let t0 = 0;
+function dessinerNuee(t) {
+  const r = toile.getBoundingClientRect(); ctx.clearRect(0, 0, r.width, r.height);
+  const cInk = css('--ink2'), cCy = css('--cy'), cOr = css('--or'), cLine = css('--line2');
+  if (!t0) t0 = t; const e = reduit ? 1e9 : t - t0; let enCours = false;
+  colonnes.forEach((c, i) => { if (i === survol) { ctx.fillStyle = css('--cy-bg'); ctx.fillRect(c.x - c.pas / 2, 0, c.pas, r.height); } });
+  ctx.fillStyle = cLine; ctx.fillRect(0, r.height - 3, r.width, 1);
+  for (const p of points) {
+    const k = Math.min(1, Math.max(0, (e - 600 - p.d) / 1400)); const q = k < 1 ? 1 - Math.pow(1 - k, 3) : 1;
+    if (k < 1) { enCours = true; p.x += p.vx; p.y += p.vy; }
+    const x = p.x + (p.tx - p.x) * q, y = p.y + (p.ty - p.y) * q; if (k >= 1) { p.x = p.tx; p.y = p.ty; }
+    ctx.fillStyle = p.col === survol ? cOr : (p.spec ? cCy : cInk); ctx.globalAlpha = p.col === survol || survol < 0 ? 1 : .45;
+    ctx.beginPath(); ctx.arc(x, y, p.r, 0, 6.2832); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  if (enCours) anim = requestAnimationFrame(dessinerNuee); else anim = 0;
+}
+function relancerNuee() { if (!anim) anim = requestAnimationFrame(dessinerNuee); }
+toile.addEventListener('pointermove', (ev) => {
+  const r = toile.getBoundingClientRect(); const x = ev.clientX - r.left; const i = colonnes.findIndex((c) => Math.abs(c.x - x) <= c.pas / 2);
+  if (i !== survol) { survol = i; const info = $('#nuee-info');
+    if (i >= 0) { const c = colonnes[i]; const qui = c.pres.map((k) => NOMS[PRESENCE.ids[k]]).join(', ') || 'aucun personnage suivi';
+      info.innerHTML = `<span class="lbl">séquence ${c.code} · ${(c.pres.length + 1) * 2} lecteurs</span><b>${qui} · le spectateur</b>`; }
+    else info.innerHTML = '<span class="lbl">survole une colonne</span>';
+    relancerNuee(); if (!anim) dessinerNuee(performance.now()); }
+});
+toile.addEventListener('pointerleave', () => { survol = -1; $('#nuee-info').innerHTML = '<span class="lbl">survole une colonne</span>'; dessinerNuee(performance.now()); });
+
+/* 01 · les trois figures */
+function figures() {
+  const fc = $('#fig-config'); fc.innerHTML = '';
+  [['fiche', 0], ['corpus', 52], ['lecture', 104], ['ordre', 156]].forEach(([t, x], i) => {
+    fc.append(sv('rect', { x, y: 22, width: 40, height: 40, fill: i === 3 ? 'var(--or-bg)' : 'none', stroke: i === 3 ? 'var(--line-or)' : 'var(--line2)' }));
+    const tx = sv('text', { x: x + 4, y: 74 }); tx.textContent = t; fc.append(tx);
+    if (i < 3) fc.append(sv('path', { d: `M${x + 42} 42 H${x + 50}`, stroke: 'var(--ink3)', fill: 'none' }));
+  });
+  const fl = $('#fig-lecteurs'); fl.innerHTML = '';
+  for (let i = 0; i < 12; i++) { const x = 8 + i * 16; fl.append(sv('rect', { x, y: 6, width: 10, height: 60, fill: i === 5 ? 'var(--line2)' : 'none', stroke: 'var(--line)' }));
+    fl.append(sv('circle', { cx: x + 5, cy: 80, r: 3, fill: i % 4 === 3 ? 'var(--cy)' : 'var(--ink2)' }));
+    fl.append(sv('path', { d: `M${x + 5} 76 V68`, stroke: 'var(--line2)' })); }
+  const fj = $('#fig-juge'); fj.innerHTML = '';
+  [[1, 1], [1, 1], [0, 0], [1, 0], [1, 1], [0, 1]].forEach(([a, b], i) => { const y = 6 + i * 13;
+    fj.append(sv('rect', { x: 0, y, width: 120, height: 8, fill: 'var(--line)' }));
+    fj.append(sv('rect', { x: 130, y, width: 8, height: 8, fill: a ? 'var(--ink2)' : 'none', stroke: 'var(--line2)' }));
+    fj.append(sv('rect', { x: 144, y, width: 8, height: 8, fill: b ? 'var(--ink2)' : 'none', stroke: 'var(--line2)' }));
+    const t = sv('text', { x: 162, y: y + 7 }); t.textContent = a && b ? 'solide' : (a || b ? 'fragile' : 'écartée'); fj.append(t); });
+}
+
+/* 02 · la carte de la saison et le configurateur */
+let epCourant = '1', sceneCourante = -1;
+const ongl = $('#onglets-ep');
+for (let e = 1; e <= 8; e++) { const b = document.createElement('button'); b.type = 'button'; b.textContent = 'épisode ' + e; b.dataset.ep = e; b.setAttribute('aria-pressed', e === 1); b.addEventListener('click', () => { epCourant = String(e); sceneCourante = -1; ongl.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b)); carte(); infoScene(); }); ongl.append(b); }
+function carte() {
+  const svg = $('#carte'); svg.innerHTML = ''; const sc = PRESENCE.eps[epCourant];
+  const presents = PRESENCE.ids.map((_, k) => sc.reduce((n, s) => n + (s[1].includes(k) ? 1 : 0), 0));
+  const ordre = PRESENCE.ids.map((_, k) => k).filter((k) => presents[k] > 0).sort((a, b) => presents[b] - presents[a]);
+  const g0 = 92, col = 10, hl = 21, haut = 34; const W = g0 + sc.length * col + 40, H = haut + ordre.length * hl + 24;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  const lmax = Math.max(...sc.map((s) => s[2]));
+  sc.forEach((s, i) => { const h = Math.max(1, (s[2] / lmax) * 22); svg.append(sv('rect', { class: 'barre' + (i === sceneCourante ? ' on' : ''), x: g0 + i * col + 1, y: haut - 6 - h, width: col - 2, height: h })); });
+  ordre.forEach((k, r) => { const y = haut + r * hl; svg.append(sv('line', { class: 'ligne', x1: g0, x2: W - 40, y1: y + hl / 2, y2: y + hl / 2 }));
+    const t = sv('text', { class: 'nom', x: 0, y: y + hl / 2 + 4 }); t.textContent = NOMS[PRESENCE.ids[k]]; svg.append(t);
+    const n = sv('text', { x: W - 34, y: y + hl / 2 + 3 }); n.textContent = presents[k]; svg.append(n);
+    sc.forEach((s, i) => { if (s[1].includes(k)) svg.append(sv('rect', { class: 'cel', x: g0 + i * col + 2, y: y + 4, width: col - 4, height: hl - 8 })); }); });
+  sc.forEach((s, i) => { const c = sv('rect', { class: 'col' + (i === sceneCourante ? ' on' : ''), x: g0 + i * col, y: 0, width: col, height: H, tabindex: 0, role: 'button', 'aria-label': 'séquence ' + s[0] });
+    c.addEventListener('click', () => { sceneCourante = i; carte(); infoScene(); });
+    c.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); sceneCourante = i; carte(); infoScene(); } });
+    c.addEventListener('pointermove', (ev) => montrer(`<b>séquence ${s[0]}</b><br>${s[1].map((k) => NOMS[PRESENCE.ids[k]]).join(', ') || 'aucun personnage suivi'}`, ev.clientX, ev.clientY));
+    c.addEventListener('pointerleave', cacher); svg.append(c); });
+  const lg = sv('text', { x: 0, y: 12 }); lg.textContent = 'LONGUEUR'; svg.append(lg);
+}
+function infoScene() {
+  const el = $('#scene-info'); const sc = PRESENCE.eps[epCourant];
+  if (sceneCourante < 0) { el.innerHTML = '<span class="lbl">séquence</span><p style="margin-top:8px">Touche une colonne de la carte.</p>'; return; }
+  const s = sc[sceneCourante];
+  const ls = s[1].map((k) => `<span>${NOMS[PRESENCE.ids[k]]} ×2</span>`).join('') + '<span class="spec">spectateur ×2</span>';
+  el.innerHTML = `<span class="lbl">épisode ${epCourant} · séquence ${s[0]}</span><p style="margin-top:8px"><b>${(s[1].length + 1) * 2} lecteurs</b>, chacun ne reçoit que cette séquence, à travers ce que son personnage sait.</p><div class="lecteurs">${ls}</div>`;
+}
+const cfgEps = $('#cfg-eps'); const cochés = new Set(['1']);
+for (let e = 1; e <= 8; e++) { const l = document.createElement('label'); l.innerHTML = `<input type="checkbox" id="cfg-ep${e}" ${e === 1 ? 'checked' : ''}>ép. ${e}`; l.querySelector('input').addEventListener('change', (ev) => { ev.target.checked ? cochés.add(String(e)) : cochés.delete(String(e)); chiffrer(); }); cfgEps.append(l); }
+$('#cfg-par').addEventListener('input', chiffrer);
+function chiffrer() {
+  const par = +$('#cfg-par').value; $('#cfg-par-v').textContent = par;
+  let lect = 0, seq = 0; cochés.forEach((e) => { lect += PLAN[e]; seq += PRESENCE.eps[e].length; });
+  $('#cfg-lecteurs').textContent = lect.toLocaleString('fr-FR'); $('#cfg-seq').textContent = seq;
+  const min = Math.round(lect * SEC_PAR_LECTEUR / par / 60); $('#cfg-temps').textContent = lect ? `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')}` : '—';
+}
+
+/* 03 · les lectures */
+const LECTURES = [
+  { t: 'Les beats et les bascules', s: 'couche c de ta méthode', voit: 'Une séquence, ses blocs numérotés, les beats candidats tirés de la surface.', rend: 'Par beat : la fonction (une des sept), la valeur en jeu et son signe, la réplique pivot. Trois bascules au plus, avec qui réagit.', juge: 'La partition exacte de la séquence, les sept fonctions, chaque citation dans son bloc.', vue: 'seq' },
+  { t: 'Vérifier ton qui sait quoi', s: 'tu écris, la machine vérifie', voit: 'Une séquence et ta ligne de qui sait quoi pour elle.', rend: 'Pour chaque ligne : le texte la porte, ou pas, avec la citation. Jamais une ligne nouvelle.', juge: 'La citation. Un écart est signalé en ambre, jamais corrigé.', vue: 'seq' },
+  { t: 'La devinabilité', s: 'seul un moteur parallèle la permet', voit: "L'épisode jusqu'au beat testé, rien d'autre. Deux spectateurs : un pressé, un fin.", rend: 'Pour chaque fait de la liste : deviné, soupçonné ou ignoré, avec ce qui le lui fait penser.', juge: 'La citation, et la comparaison avec le contrat de séquence : ce que le public doit encore ignorer.', vue: 'jusqua' },
+  { t: 'La voix', s: 'plus tard', voit: "Les répliques d'un seul personnage, rien autour.", rend: 'Chaque réplique contre la voix écrite dans la bible.', juge: 'La citation.', vue: 'voix' },
+];
+let lectureCourante = 2;
+const liste = $('#liste-lectures');
+LECTURES.forEach((l, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.innerHTML = `<b>${i + 1}</b><span>${l.t}</span><small>${l.s}</small>`; b.addEventListener('click', () => { lectureCourante = i; lecture(); }); liste.append(b); });
+let beatTest = 34;
+function lecture() {
+  liste.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-selected', i === lectureCourante));
+  const l = LECTURES[lectureCourante]; const el = $('#lecture');
+  el.innerHTML = `<div class="vue"><svg viewBox="0 0 640 74" id="vue-svg"></svg></div>
+    ${l.vue === 'jusqua' ? `<div class="curseur"><span class="lbl">beat testé</span><input type="range" id="beat" min="4" max="58" value="${beatTest}" aria-label="Beat testé"><output id="beat-v">${beatTest}</output></div>` : ''}
+    <div class="trois-col"><div><span class="lbl cy">ce qu'il voit</span><p>${l.voit}</p></div><div><span class="lbl cy">ce qu'il rend</span><p>${l.rend}</p></div><div><span class="lbl cy">le juge vérifie</span><p>${l.juge}</p></div></div>
+    ${l.vue === 'jusqua' ? `<div><span class="exemple">exemple inventé · rien n'a tourné</span></div><div class="specs" id="specs"></div>` : ''}`;
+  vue(); if (l.vue === 'jusqua') { $('#beat').addEventListener('input', (e) => { beatTest = +e.target.value; $('#beat-v').textContent = beatTest; vue(); specs(); }); specs(); }
+}
+function vue() {
+  const s = $('#vue-svg'); if (!s) return; s.innerHTML = ''; const l = LECTURES[lectureCourante]; const N = 60, w = 640 / N;
+  const seq = [12, 13, 14, 15, 16];
+  for (let i = 0; i < N; i++) { let c = 'b';
+    if (l.vue === 'seq' && seq.includes(i)) c += ' vu';
+    if (l.vue === 'jusqua') { if (i < beatTest) c += ' vu'; if (i === beatTest) c += ' cur'; }
+    if (l.vue === 'voix' && i % 7 === 2) c += ' vu';
+    s.append(sv('rect', { class: c, x: i * w + 1, y: 16, width: w - 2, height: 34 })); }
+  const t = sv('text', { x: 0, y: 70 }); t.textContent = l.vue === 'seq' ? 'UNE SÉQUENCE, RIEN AVANT, RIEN APRÈS' : l.vue === 'jusqua' ? "TOUT JUSQU'AU BEAT TESTÉ, LA SUITE RESTE NOIRE" : "LES RÉPLIQUES D'UN SEUL PERSONNAGE"; s.append(t);
+  const t2 = sv('text', { x: 0, y: 10 }); t2.textContent = "L'ÉPISODE EN BEATS"; s.append(t2);
+}
+function specs() {
+  const el = $('#specs'); if (!el) return;
+  const faits = [['A', 'le vrai nom du héros', 18, 40], ['B', "qui a vendu l'atelier", 30, 46], ['C', 'la lettre jamais envoyée', 44, 56]];
+  const etat = (b, s1, s2) => b >= s2 ? ['devine', 'deviné'] : b >= s1 ? ['soupcon', 'soupçonné'] : ['ignore', 'ignoré'];
+  const bloc = (titre, dec) => `<div class="spec"><span class="lbl">${titre}</span>${faits.map(([k, n, a, b]) => { const [c, m] = etat(beatTest, a - dec, b - dec); return `<div class="rang"><span>fait ${k} · ${n}</span><span class="mark ${c}">${m}</span></div>`; }).join('')}</div>`;
+  el.innerHTML = bloc('le spectateur pressé', 0) + bloc('le spectateur fin', 10);
+}
+
+/* 04 · le juge */
+const REPS = [
+  { q: '« Ne me demande pas d’où ça vient. »', qui: 'lecteur Mado · graine 11', dit: 'Jo cache l’origine de l’argent', ok: true },
+  { q: '« Je ne demande jamais rien. »', qui: 'lecteur Jo · graine 23', dit: 'Mado refuse de savoir', ok: true },
+  { q: '« Cet argent est volé, je le sais. »', qui: 'lecteur spectateur · graine 11', dit: 'Mado sait que l’argent est volé', ok: false },
+];
+function juge(lance) {
+  const el = $('#juge-reps');
+  el.innerHTML = `<span class="lbl">trois réponses de lecteurs</span>` + REPS.map((r, i) => `<div class="rep-l ${lance ? (r.ok ? 'ok' : 'non') : ''}" id="rep${i}"><span class="lbl">${r.qui}</span><span>${r.dit}</span><span class="q">${r.q}</span><div class="v"><span class="verdict">${lance ? (r.ok ? 'trouvée mot pour mot · retenue' : 'introuvable dans la scène · écartée') : 'en attente du juge'}</span></div></div>`).join('') +
+    `<div class="envoi" style="margin-top:4px"><button class="bt" type="button" id="lancer-juge">${lance ? 'Recommencer' : 'Lancer le juge'}</button></div>`;
+  $('#lancer-juge').addEventListener('click', () => juge(!lance));
+  const tx = $('#juge-texte');
+  tx.querySelectorAll('mark').forEach((m) => m.replaceWith(m.textContent));
+  if (lance) REPS.filter((r) => r.ok).forEach((r) => { const cible = r.q.replace(/[«»]/g, '').trim().replace(/’/g, "'");
+    tx.querySelectorAll('.rep').forEach((sp) => { const t = sp.textContent; const i = t.indexOf(cible); if (i >= 0) sp.innerHTML = t.slice(0, i) + '<mark>' + t.slice(i, i + cible.length) + '</mark>' + t.slice(i + cible.length); }); });
+}
+
+/* 05 · le négatif */
+const OPTIONS = [
+  { k: 'A', t: 'Elle refuse l’argent et dit à Jo pourquoi.', n: 29 },
+  { k: 'B', t: 'Elle refuse sans un mot et rend l’enveloppe.', n: 6 },
+  { k: 'C', t: 'Elle prend l’argent sans poser de question.', n: 3 },
+  { k: 'D', t: 'Elle prend l’argent et le rembourse en secret à qui il a été pris.', n: 2 },
+  { k: 'E', t: 'Elle range l’enveloppe dans une boîte de bobines et ne la touche plus jamais.', n: 0 },
+];
+const REGARDS = ['pressé', 'habitué du genre', 'acteur', 'monteur', 'lecteur de saison'];
+// Répartition par regard, pour l'exemple : 8 lecteurs par regard.
+const PAR_REGARD = [[7, 1, 0, 0, 0], [7, 1, 0, 0, 0], [5, 2, 1, 0, 0], [5, 1, 1, 1, 0], [5, 1, 1, 1, 0]];
+let registre = garde.lire('cs-registre-mado') || [];
+function options() {
+  const el = $('#options'); el.innerHTML = '';
+  OPTIONS.forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = `<b>${o.k}</b><span>${o.t}</span>`; b.addEventListener('click', () => choisir(i)); el.append(b); });
+}
+function choisir(i) {
+  const bts = $('#options').querySelectorAll('button'); bts.forEach((b, j) => { b.classList.toggle('choisi', j === i); });
+  const o = OPTIONS[i]; const total = OPTIONS.reduce((n, x) => n + x.n, 0); const max = OPTIONS.reduce((m, x) => Math.max(m, x.n), 0);
+  const attendu = o.n === max; const part = Math.round(o.n / total * 100);
+  const cols = ['var(--ink2)', 'var(--ink3)'];
+  $('#negatif').innerHTML = `<span class="lbl">le négatif · ce qu'attendaient ${total} lecteurs</span>
+    <div class="barres">${OPTIONS.map((x, j) => `<div class="r ${j === i ? 'auteur' : ''}"><b>${x.k}</b><div class="t"><i style="width:0" data-w="${x.n / total * 100}"></i></div><span class="n">${x.n}</span></div>`).join('')}</div>
+    <div class="regards">${REGARDS.map((r, ri) => `<div><div class="pile">${PAR_REGARD[ri].map((n, j) => `<i style="height:${n / 8 * 100}%;background:${j === i ? 'var(--cy)' : cols[j === 0 ? 0 : 1]};opacity:${j === i ? 1 : (j === 0 ? .7 : .5)}"></i>`).join('')}</div><span>${r}</span></div>`).join('')}</div>
+    <div class="constat ${attendu ? 'attendu' : 'alui'}">${attendu ? `<b>Ton choix est celui qu'on attend</b> : ${o.n} lecteurs sur ${total} l'ont prévu. Voulu, ou cliché ? Toi seul le dis.` : `<b>Ici, Mado est à toi</b> : ${o.n === 0 ? 'aucun lecteur' : o.n + ' lecteur' + (o.n > 1 ? 's' : '') + ' sur ' + total} ${o.n > 1 ? "l'ont" : "l'a"} vue faire ça. L'écart à l'attendu entre au registre.`}</div>
+    ${attendu ? `<div class="envoi" style="margin-top:0"><button class="bt" type="button" id="voulu">C'est voulu</button><button class="bt" type="button" id="autre">Je cherche autre chose</button></div>` : ''}
+    <span class="exemple">exemple inventé · rien n'a tourné</span>`;
+  requestAnimationFrame(() => requestAnimationFrame(() => $('#negatif').querySelectorAll('.t i').forEach((e) => { e.style.width = e.dataset.w + '%'; })));
+  const signer = (note) => { registre.unshift({ d: new Date().toLocaleDateString('fr-FR') + ' ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }), c: `${o.k} · ${o.t}`, e: attendu ? note : `écart · ${part} % l'attendaient` }); registre = registre.slice(0, 8); garde.ecrire('cs-registre-mado', registre); dessinerRegistre(); };
+  if (attendu) { $('#voulu').addEventListener('click', () => { signer("attendu · voulu"); $('#voulu').parentElement.innerHTML = '<span class="note">Signé : attendu, et voulu.</span>'; });
+    $('#autre').addEventListener('click', () => { bts.forEach((b) => b.classList.remove('choisi')); $('#negatif').innerHTML = `<span class="lbl">le négatif</span><div class="attente">Choisis une autre réponse : la nuée reste la même, c'est toi qui bouges.</div>`; }); }
+  else signer();
+}
+function dessinerRegistre() {
+  const el = $('#registre');
+  if (!registre.length) { el.innerHTML = `<li><span class="d">—</span><span>Aucun choix encore. Chaque choix signé s'ajoute ici ; leur suite, c'est le caractère.</span><span></span></li>`; return; }
+  el.innerHTML = registre.map((r) => `<li><span class="d">${r.d}</span><span>${r.c}</span><span class="e" style="color:${r.e.startsWith('écart') ? 'var(--grn)' : 'var(--amb)'}">${r.e}</span></li>`).join('');
+}
+
+/* 06 · l'arche dans le temps */
+const MOMENTS = [
+  { t: "L'amorce", a: 'un pitch, trois phrases par personnage', f: "Les situations à choisir. Un lecteur par regard relève la grille qui domine : « tous définis par un passé douloureux », « à aucun il n'arrive de décider ».", s: 'Le registre qui se remplit, la place du cliché, une question à la fois.' },
+  { t: 'La distribution', a: 'plusieurs personnages, leurs choix signés', f: 'Le réseau : chaque personnage comme réponse au même problème. La nuée signale deux personnages qui choisissent pareil, et la réponse que personne ne porte.', s: 'Le miroir de la distribution : qui se confond, quelle place reste vide.' },
+  { t: 'Le monde éprouvé', a: 'la bible, le qui sait quoi dans le temps du monde', f: "Tu figes la bible à un point du récit et tu y lâches un choc. Chaque personnage est un agent qui ne reçoit que ce qu'il sait, cinq fois, cinq graines. On garde qui fait quoi, jamais ce qu'ils disent.", s: "Une chronique d'actes. Ce qui se répète dit le personnage ; les réflexes du modèle (prudence, franchise, réconciliation) sont nommés comme tels." },
+  { t: 'Le contrefactuel', a: 'un personnage et son registre', f: 'La même épreuve, un seul élément changé : un souvenir, un secret.', s: 'Ce que cet élément change vraiment dans les actes. Un élément qui ne change rien est une caractérisation sans caractère.' },
+  { t: 'Le script', a: 'le texte (les Années Folles aujourd’hui)', f: 'La nuée de lecture, plus deux lectures de personnage : tes choix signés se retrouvent-ils dans les scènes ? le personnage a-t-il déjà surpris, et où ?', s: 'Les écarts, en ambre, jamais corrigés.' },
+];
+let momentCourant = 0;
+const pas = $('#pas');
+MOMENTS.forEach((m, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.innerHTML = `<i>${i + 1}</i><span>${m.t}</span>`; b.addEventListener('click', () => { momentCourant = i; moment(); }); pas.append(b); });
+function moment() {
+  pas.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-selected', i === momentCourant));
+  const m = MOMENTS[momentCourant];
+  $('#moment').innerHTML = `<div><span class="lbl">ce qu'il y a</span><p>${m.a}</p></div><div><span class="lbl cy">ce que font les agents</span><p>${m.f}</p></div><div><span class="lbl">ce que tu reçois</span><p>${m.s}</p></div>`;
+}
+function traces() {
+  const a = $('#tr-choix'); a.innerHTML = '';
+  a.append(sv('line', { x1: 0, x2: 300, y1: 56, y2: 56, stroke: 'var(--line2)' }));
+  [[10, 1], [60, 1], [110, 0], [170, 0], [230, 0], [285, 0]].forEach(([x, s], i) => { a.append(sv('rect', { x: x - 5, y: s ? 34 : 14, width: 10, height: 10, fill: s ? 'none' : 'var(--cy)', stroke: 'var(--cy)' })); });
+  const t1 = sv('text', { x: 0, y: 68 }); t1.textContent = 'attendu'; a.append(t1); const t2 = sv('text', { x: 256, y: 68 }); t2.textContent = 'à lui'; a.append(t2);
+  const b = $('#tr-sait'); b.innerHTML = '';
+  ['fait A', 'fait B', 'fait C'].forEach((f, i) => { const y = 12 + i * 18; b.append(sv('line', { x1: 40, x2: 300, y1: y, y2: y, stroke: 'var(--line)' })); const t = sv('text', { x: 0, y: y + 3 }); t.textContent = f; b.append(t); const x = [90, 170, 250][i]; b.append(sv('line', { x1: x, x2: 300, y1: y, y2: y, stroke: 'var(--cy)', 'stroke-width': 2 })); b.append(sv('circle', { cx: x, cy: y, r: 3, fill: 'var(--cy)' })); });
+  const c = $('#tr-statut'); c.innerHTML = '';
+  const pts = [40, 46, 30, 22, 38, 50, 44, 26, 16, 12]; c.append(sv('line', { x1: 0, x2: 300, y1: 34, y2: 34, stroke: 'var(--line)', 'stroke-dasharray': '2 3' }));
+  c.append(sv('polyline', { points: pts.map((y, i) => `${i * 33},${y}`).join(' '), fill: 'none', stroke: 'var(--cy)', 'stroke-width': 1.5 }));
+  pts.forEach((y, i) => c.append(sv('circle', { cx: i * 33, cy: y, r: 2.4, fill: 'var(--bg)', stroke: 'var(--cy)' })));
+  const t3 = sv('text', { x: 0, y: 68 }); t3.textContent = 'haut ↑ bas ↓ · scène par scène'; c.append(t3);
+}
+
+/* 09 · les choix */
+const CHOIX = [
+  { id: 'n1', g: 'la nuée', q: "L'ordre des lectures", avis: 'Avis : la devinabilité d’abord, sur un épisode ; elle seule demande le parallélisme et se juge d’un coup d’œil.', o: ['La devinabilité d’abord, puis les beats et bascules', 'Les beats et bascules d’abord', 'Vérifier mon qui sait quoi d’abord'] },
+  { id: 'n2', g: 'la nuée', q: 'Le mot dans le schéma', avis: 'L’étude de scène porte « veut / sait / cache » ; ta décision du 24/10 dit « qui sait quoi ».', o: ['Garder les trois champs dans les données, dire « qui sait quoi » à l’écran', 'Tout renommer en « qui sait quoi »'] },
+  { id: 'n3', g: 'la nuée', q: 'Le modèle', avis: 'Le premier est installé et répond aujourd’hui ; le second traite plusieurs lecteurs à la fois.', o: ['Qwen 2.5, 14 milliards de paramètres, par Ollama', 'Qwen 27 milliards par vLLM, comme le prévoit l’étude des beats'] },
+  { id: 'n4', g: 'la nuée', q: 'Le premier essai', avis: 'Épisode 1, version du 12 octobre, 370 lecteurs, environ une demi-heure, avec les gardes.', o: ['Vas-y', 'Pas encore'] },
+  { id: 'p1', g: 'les personnages', q: "L'idée centrale", avis: 'La nuée dessine ce qu’on attend en face de tes choix signés ; faire jouer les personnages les ramène à la moyenne.', o: ['Oui : la nuée dessine l’attendu, je signe les choix', 'Aller plus loin, jusqu’à faire jouer les personnages'] },
+  { id: 'p2', g: 'les personnages', q: 'Le registre dans le schéma', avis: 'Le seul champ commun à tous tes documents est le désir ; « jamais » et la voix viennent de ta bible de monde éprouvée.', o: ['Des choix datés ; seulement désir, « jamais » et voix comme champs libres', 'Garder aussi blessure, besoin, mensonge et vérité'] },
+  { id: 'p3', g: 'les personnages', q: 'Le premier banc', avis: 'À rebours : tu réponds pour Victor, Lucie, Louis sans regarder le script, puis on compare au texte des huit épisodes.', o: ['Un projet qui démarre', 'Les Années Folles à rebours', 'Les deux'] },
+  { id: 'p4', g: 'les personnages', q: "L'épreuve à monde figé", avis: 'La plus coûteuse : des agents qui agissent avec ce qu’ils savent, cinq graines.', o: ['Maintenant, dans l’étude', 'Plus tard, une fois les situations à choisir éprouvées'] },
+];
+// Les réponses de Cal du 24/10 (au registre) ; le choix 2 reste ouvert.
+const TRANCHE = { n1: { o: 1 }, n3: { o: 1 }, n4: { o: 0 }, p1: { o: 1 }, p2: { o: 1 }, p3: { o: 2 }, p4: { o: 0 } };
+let reponses = garde.lire('cs-choix') || { ...TRANCHE };
+function choix() {
+  const f = $('#form-choix'); f.innerHTML = '';
+  CHOIX.forEach((c, i) => { const fs = document.createElement('fieldset');
+    fs.innerHTML = `<legend><span class="lbl">${c.g} · ${i + 1}</span><span>${c.q}</span></legend><p class="avis">${c.avis}</p>` +
+      c.o.map((o, j) => `<label><input type="radio" name="${c.id}" id="${c.id}-${j}" value="${j}" ${reponses[c.id]?.o === j ? 'checked' : ''}><span>${o}</span></label>`).join('') +
+      `<textarea id="${c.id}-libre" placeholder="Ta réponse libre, si aucune ne va">${reponses[c.id]?.t || ''}</textarea>`;
+    fs.addEventListener('change', (e) => { if (e.target.type === 'radio') { reponses[c.id] = { ...(reponses[c.id] || {}), o: +e.target.value }; garde.ecrire('cs-choix', reponses); } });
+    fs.querySelector('textarea').addEventListener('input', (e) => { reponses[c.id] = { ...(reponses[c.id] || {}), t: e.target.value }; garde.ecrire('cs-choix', reponses); });
+    f.append(fs); });
+  f.addEventListener('submit', (e) => e.preventDefault());
+}
+function texteReponses() {
+  return 'Mes réponses (page atelier Cinema Studio)\n' + CHOIX.map((c, i) => { const r = reponses[c.id] || {}; return `${i + 1}. ${c.q} : ${r.o != null ? c.o[r.o] : '(pas de choix)'}${r.t ? ' · ' + r.t.trim() : ''}`; }).join('\n');
+}
+$('#copier').addEventListener('click', () => {
+  const t = texteReponses(); const ta = $('#texte-reponses'); ta.value = t;
+  navigator.clipboard.writeText(t).then(() => { $('#copie-etat').textContent = 'Copié. Colle-le dans la session.'; ta.hidden = true; })
+    .catch(() => { ta.hidden = false; ta.focus(); ta.select(); $('#copie-etat').textContent = 'La copie automatique est refusée ici : le texte est sélectionné, copie-le à la main.'; });
+});
+
+/* le sommaire suit la lecture */
+const liens = [...document.querySelectorAll('nav.som a')];
+const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) liens.forEach((a) => a.classList.toggle('ici', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-40% 0px -55% 0px' });
+document.querySelectorAll('section.pl').forEach((s) => obs.observe(s));
+
+function dessinerTout() { dessinerNuee(1e12); }
+preparerNuee(); figures(); carte(); infoScene(); chiffrer(); lecture(); juge(false); options(); dessinerRegistre(); moment(); traces(); choix();
+if (reduit) dessinerNuee(1e12); else relancerNuee();
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { preparerNuee(); dessinerNuee(1e12); }, 150); });
+if (location.hash) { const c = document.getElementById(location.hash.slice(1)); if (c) c.scrollIntoView(); }
+</script>
